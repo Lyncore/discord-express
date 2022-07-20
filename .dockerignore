@@ -1,0 +1,14 @@
+.git
+.gitignore
+.cache
+
+*.md
+!README*.md
+
+.editorconfig
+.npmignore
+.prettierignore
+.prettierrc.json
+
+node_modules
+npm-debug.log
