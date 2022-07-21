@@ -1,7 +1,7 @@
 
-import { fromMS, toMS } from "@/utils";
+import { fromMS, regexPlaylist, toMS } from "@/utils";
 import { AudioResource } from "@discordjs/voice";
-import { CommonTrack, Player, Queue, Track } from "@discordx/music";
+import { CommonTrack, Player, Queue, Track, YoutubeTrack } from "@discordx/music";
 import { CommandInteraction, Guild, GuildMember, Message, MessageEmbed, TextBasedChannel, User } from "discord.js";
 import { ArgsOf, On, SlashGroup, SlashOption ,
   Discord,
@@ -9,7 +9,8 @@ import { ArgsOf, On, SlashGroup, SlashOption ,
   Client,
 } from "discordx";
 import { ExpressPlayer, ExpressQueue } from "../engine";
-
+import * as ytsr from "ytsr";
+import { regexp } from "sequelize/types/lib/operators";
 
 @Discord()
 export class MusicCommands{
@@ -44,12 +45,11 @@ export class MusicCommands{
 
     const totalMembers = channel.members.filter((m) => !m.user.bot);
 
-    if (queue.isPlaying && !totalMembers.size) {
-      queue.pause();
-      
-      queue.channel.send(
-        "Все участники покинули голосовой чат, воспроизведение приостановлено."
-      );
+    if (totalMembers.size == 0) {
+      if(!queue.isPause){ 
+        queue.pause();
+        queue.channel.send( `Все участники покинули голосовой чат, воспроизведение приостановлено.`);
+      }
 
       if (queue.timeoutTimer) {
         clearTimeout(queue.timeoutTimer);
@@ -61,7 +61,7 @@ export class MusicCommands{
         );
         queue.leave();
       }, 5 * 60 * 1000);
-    } else if (queue.isPause && totalMembers.size) {
+    } else if (totalMembers.size > 0) {
       if (queue.timeoutTimer) {
         clearTimeout(queue.timeoutTimer);
         queue.timeoutTimer = undefined;
@@ -70,6 +70,7 @@ export class MusicCommands{
       queue.channel.send(
         "Вы снова вернулись - можете продолжить воспроизведение текущего плейлиста 🎶"
       );
+
     }
   }
 
@@ -82,13 +83,13 @@ export class MusicCommands{
       }
     });*/
 
-    this.player.on("onFinishPlayback", ([]) => {
+    /*this.player.on("onFinishPlayback", ([queue]) => {
       if (this.channel) {
         this.channel.send(
           "Музыка закончилась... :musical_note:"
         );
       }
-    });
+    });*/
 
     /*this.player.on("onPause", ([]) => {
       if (this.channel) {
@@ -102,11 +103,11 @@ export class MusicCommands{
       }
     });*/
 
-    this.player.on("onError", ([, err, track]) => {
+    /*this.player.on("onError", ([, err, track]) => {
       if (this.channel) {
         this.channel.send(`Невозможно воспроизвести трек: ${track} \nОшибка: ${err.message}`);
       }
-    });
+    });*/
 
     /*this.player.on("onLoop", ([]) => {
       if (this.channel) {
@@ -125,7 +126,7 @@ export class MusicCommands{
         this.channel.send(`Трек ${track} пропущен`);
       }
     });*/
-
+/*
     this.player.on("onTrackAdd", ([queue, track]) => {
       if (this.channel) {
         this.channel.send(`Добавлен трек ${queue.nextTrack.title}, всего треков: ${queue.tracks.length}`);
@@ -161,7 +162,7 @@ export class MusicCommands{
         this.channel.send(`Перемешано треков: ${tracks.length}`);
       }
     });
-
+*/
   }
   
   @Slash("play", { description: "Добавить трек в очередь" })
@@ -171,34 +172,27 @@ export class MusicCommands{
     interaction: CommandInteraction,
     client: Client
   ): Promise<void> {
-    if (!interaction.guild) {
-      return;
-    }
-
-    if (
-      !(interaction.member instanceof GuildMember) ||
-      !interaction.member.voice.channel
-    ) {
-      interaction.reply("Вы не находитесь в голосовом чате");
-      return;
-    }
-   
     //await interaction.deferReply();
     const queue = await this.processJoin(interaction, client)
-
-    if (!queue.isReady) {
-      this.channel = interaction.channel ?? undefined;
-      await queue.join(interaction.member.voice.channel);
-    } else if(queue.voiceChannelId != interaction.member.voice.channel.id){
-      interaction.followUp("Бот находится в другом голосовом чате");
-      return;
-    }
+    if(!queue) return;
+    
     console.log(songName)
-    const status = await queue.play(songName);
-    if (!status) {
-      interaction.followUp("Трек не найден(");
+
+
+    if(regexPlaylist.test(songName)){
+      const status = await queue.playlist(songName);
+      if (!status) {
+        interaction.followUp("Плейлист не найден(");
+      } else {
+        interaction.followUp(`Добавляю трек ${songName} и ещё ${status.length-1} треков...`); 
+      }
     } else {
-      interaction.followUp(`Добавляю трек ${songName}...`); 
+      const status = await queue.play(songName);
+      if (!status) {
+        interaction.followUp("Трек не найден(");
+      } else {
+        interaction.followUp(`Добавляю трек ${songName}...`); 
+      }
     }
   }
 
@@ -325,7 +319,11 @@ export class MusicCommands{
 
     if (!queue.isReady) {
       queue.channel = interaction.channel;
+      //this.channel = interaction.channel ?? undefined;
       await queue.join(interaction.member.voice.channel);
+    } else if(queue.voiceChannelId != interaction.member.voice.channel.id){
+      interaction.followUp("Бот находится в другом голосовом чате");
+      return;
     }
 
     return queue;

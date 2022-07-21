@@ -1,11 +1,9 @@
 import "reflect-metadata";
 import { Configuration, Service } from "@tsed/di";
-import { dirname, importx } from "@discordx/importer";
-import { Player } from "discord-player";
+import {importx } from "@discordx/importer";
 import type { Interaction, Message } from "discord.js";
 import { Intents } from "discord.js";
 import { Client } from "discordx";
-import { config } from "process";
 
 @Service()
 export class BotService{
@@ -71,7 +69,7 @@ export class BotService{
             this.bot.executeInteraction(interaction);
           });
           
-          this. bot.on("messageCreate", (message: Message) => {
+          this.bot.on("messageCreate", (message: Message) => {
             console.log(`Server: ${message.guild}\nChannel: ${message.channel.id}\nUser: ${message.author}\nMessage: ${message.content} `);
             this.bot.executeCommand(message);
           });

@@ -1,6 +1,6 @@
 import type { ArgsOf, Client } from "discordx";
 import { Discord, On } from "discordx";
-import { Player } from "discord-player";
+import { Guild, GuildMember, Message, MessageReaction, TextBasedChannel, User } from "discord.js";
 
 @Discord()
 export class Events {
@@ -19,7 +19,20 @@ export class Events {
   onReady([message]: ArgsOf<"ready">, client: Client): void{
     client.user?.setActivity("/help");
   }
-
+  @On("guildCreate")
+  onGuildCreate(guild: Guild){
+    console.log("Добавлен сервер: " + guild.name)
+  }/*
+  @On('guildMemberAdd')
+  onGuildMemberAdd(member: GuildMember){
+    member.guild.systemChannel.send(`Добро пожаловать, ${member.user}! Для получения доступа к серверу ознакомься с правилами и ответь на сообщение с правилами для подтверждения.`);
+   
+  }
+  @On('messageReactionAdd')
+  onMessageCreate(reaction: MessageReaction, user: User ){
+    if(user.bot){return;}
+    
+  }*/
 }
 
 export class PlayerEvents{

@@ -1,5 +1,5 @@
 import { CommandInteraction, User } from "discord.js";
-import { Discord, Slash, SlashOption } from "discordx";
+import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
 
 @Discord()
 export class AdminCommands{
@@ -14,5 +14,9 @@ export class AdminCommands{
     ){
 
     }*/
+    @SlashGroup("set")
+    Set(){
+
+    }
 
 }
