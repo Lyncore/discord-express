@@ -1,16 +1,14 @@
 
 import { fromMS, regexPlaylist, toMS } from "@/utils";
 import { AudioResource } from "@discordjs/voice";
-import { CommonTrack, Player, Queue, Track, YoutubeTrack } from "@discordx/music";
-import { CommandInteraction, Guild, GuildMember, Message, MessageEmbed, TextBasedChannel, User } from "discord.js";
-import { ArgsOf, On, SlashGroup, SlashOption ,
+import { CommonTrack, Queue} from "@discordx/music";
+import { Client, CommandInteraction, Guild, GuildMember,TextBasedChannel } from "discord.js";
+import { ArgsOf, On, SlashOption ,
   Discord,
   Slash,
-  Client,
+
 } from "discordx";
 import { ExpressPlayer, ExpressQueue } from "../engine";
-import * as ytsr from "ytsr";
-import { regexp } from "sequelize/types/lib/operators";
 
 @Discord()
 export class MusicCommands{
@@ -21,15 +19,15 @@ export class MusicCommands{
   @On("voiceStateUpdate")
   voiceUpdate(
     [oldState, newState]: ArgsOf<"voiceStateUpdate">,
-    client: Client
+    // client: Client
   ): void {
     const queue = this.player.getQueue(oldState.guild)
 
     if (
       !queue.isReady ||
       !queue.voiceChannelId ||
-      (oldState.channelId != queue.voiceChannelId &&
-        newState.channelId != queue.voiceChannelId) 
+      (oldState.channelId !== queue.voiceChannelId &&
+        newState.channelId !== queue.voiceChannelId) 
     ) {
       return;
     } 
@@ -45,7 +43,7 @@ export class MusicCommands{
 
     const totalMembers = channel.members.filter((m) => !m.user.bot);
 
-    if (totalMembers.size == 0) {
+    if (totalMembers.size === 0) {
       if(!queue.isPause){ 
         queue.pause();
         queue.channel.send( `Все участники покинули голосовой чат, воспроизведение приостановлено.`);
@@ -66,7 +64,7 @@ export class MusicCommands{
         clearTimeout(queue.timeoutTimer);
         queue.timeoutTimer = undefined;
       }
-      //queue.resume();
+      // queue.resume();
       queue.channel.send(
         "Вы снова вернулись - можете продолжить воспроизведение текущего плейлиста 🎶"
       );
@@ -77,39 +75,39 @@ export class MusicCommands{
   constructor(){
     this.player = new ExpressPlayer();
 
-    /*this.player.on("onStart", ([queue, track]) => {
+    /* this.player.on("onStart", ([queue, track]) => {
       if (this.channel) {
         this.channel.send(`Бот запущен в канале ${queue.voiceGroup}`);
       }
-    });*/
+    }); */
 
-    /*this.player.on("onFinishPlayback", ([queue]) => {
+    /* this.player.on("onFinishPlayback", ([queue]) => {
       if (this.channel) {
         this.channel.send(
           "Музыка закончилась... :musical_note:"
         );
       }
-    });*/
+    }); */
 
-    /*this.player.on("onPause", ([]) => {
+    /* this.player.on("onPause", ([]) => {
       if (this.channel) {
         this.channel.send("Музыка остановлена");
       }
-    });*/
+    }); */
 
-    /*this.player.on("onResume", ([]) => {
+    /* this.player.on("onResume", ([]) => {
       if (this.channel) {
         this.channel.send("Продолжаю воспроизведение...");
       }
-    });*/
+    }); */
 
-    /*this.player.on("onError", ([, err, track]) => {
+    /* this.player.on("onError", ([, err, track]) => {
       if (this.channel) {
         this.channel.send(`Невозможно воспроизвести трек: ${track} \nОшибка: ${err.message}`);
       }
-    });*/
+    }); */
 
-    /*this.player.on("onLoop", ([]) => {
+    /* this.player.on("onLoop", ([]) => {
       if (this.channel) {
         this.channel.send("music resumed");
       }
@@ -119,13 +117,13 @@ export class MusicCommands{
       if (this.channel) {
         this.channel.send("music resumed");
       }
-    });*/
+    }); */
 
-    /*this.player.on("onSkip", ([, track]) => {
+    /* this.player.on("onSkip", ([, track]) => {
       if (this.channel) {
         this.channel.send(`Трек ${track} пропущен`);
       }
-    });*/
+    }); */
 /*
     this.player.on("onTrackAdd", ([queue, track]) => {
       if (this.channel) {
@@ -172,14 +170,20 @@ export class MusicCommands{
     interaction: CommandInteraction,
     client: Client
   ): Promise<void> {
-    //await interaction.deferReply();
+    // await interaction.deferReply();
     const queue = await this.processJoin(interaction, client)
     if(!queue) return;
     
     console.log(songName)
 
 
-    if(regexPlaylist.test(songName)){
+    const status = await queue.play(songName);
+    if (!status) {
+      interaction.followUp("Трек не найден(");
+    } else {
+      interaction.followUp(`Добавляю трек ${songName}...`); 
+    }
+    /*if(regexPlaylist.test(songName)){
       const status = await queue.playlist(songName);
       if (!status) {
         interaction.followUp("Плейлист не найден(");
@@ -193,7 +197,7 @@ export class MusicCommands{
       } else {
         interaction.followUp(`Добавляю трек ${songName}...`); 
       }
-    }
+    }*/
   }
 
   @Slash("now", {description: "Что играет?"})
@@ -253,7 +257,7 @@ export class MusicCommands{
     }
 
     const { queue } = validate;
-    if(queue.size == 0){
+    if(queue.size === 0){
       interaction.reply(`Очередь уже пуста`);
       return;
     }
@@ -273,6 +277,7 @@ export class MusicCommands{
     queue.leave();
     interaction.reply("Плейлист сброшен, бот покинул чат...");
   }
+
   playbackMilliseconds(track: AudioResource<CommonTrack>): number {
 
     if (
@@ -319,7 +324,7 @@ export class MusicCommands{
 
     if (!queue.isReady) {
       queue.channel = interaction.channel;
-      //this.channel = interaction.channel ?? undefined;
+      // this.channel = interaction.channel ?? undefined;
       await queue.join(interaction.member.voice.channel);
     } else if(queue.voiceChannelId != interaction.member.voice.channel.id){
       interaction.followUp("Бот находится в другом голосовом чате");

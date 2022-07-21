@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { Configuration, Service } from "@tsed/di";
+import { Service } from "@tsed/di";
 import {importx } from "@discordx/importer";
 import type { Interaction, Message } from "discord.js";
 import { Intents } from "discord.js";
@@ -25,7 +25,9 @@ export class BotService{
         },
       });
 
-    constructor(@Configuration() configuration: Configuration) {
+    constructor(
+      // @Configuration() configuration: Configuration
+      ) {
         console.log("Music service initialised");
         this.run();
     }
@@ -47,7 +49,7 @@ export class BotService{
           
             await this.bot.initApplicationCommands();
           
-            await this.bot.initApplicationPermissions();
+            //await this.bot.initApplicationPermissions();
           
             // To clear all guild commands, uncomment this line,
             // This is useful when moving from guild commands to global commands

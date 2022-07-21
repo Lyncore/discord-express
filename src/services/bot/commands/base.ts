@@ -1,6 +1,6 @@
 import { Pagination } from "@discordx/pagination";
-import { CommandInteraction, Message, MessageEmbed } from "discord.js";
-import { MetadataStorage, SlashGroup ,
+import { CommandInteraction, MessageEmbed } from "discord.js";
+import { MetadataStorage, 
   Discord,
   Slash,
 } from "discordx";
@@ -14,7 +14,7 @@ export class BaseCommands{
         interaction: CommandInteraction
     ): Promise<void>{
         interaction.reply(`👋 Привет, ${interaction.member}`);
-    }*/
+    } */
 
     @Slash("ping", {description: "Проверка ботяры"})
     async ping(

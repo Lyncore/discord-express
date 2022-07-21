@@ -14,9 +14,9 @@ export function toMS(duration: string): number {
         .split(":")
         .reduceRight(
           (prev, curr, i, arr) =>
-            prev + parseInt(curr) * Math.pow(60, arr.length - 1 - i),
+            prev + parseInt(curr) * (60 ** arr.length - 1 - i),
           0
         ) * 1e3;
 
-    return milliseconds ? milliseconds : 0;
+    return milliseconds || 0;
   }

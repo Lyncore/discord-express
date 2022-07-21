@@ -1,6 +1,5 @@
 import {$log, Configuration, Inject, PlatformApplication} from '@tsed/common';
 
-import * as chalk from 'chalk';
 import * as bodyParser from 'body-parser';
 import * as compression from 'compression';
 import * as cors from 'cors';
@@ -11,6 +10,7 @@ import '@tsed/ajv';
 import {ErrorHandlerMiddleWare, NotFoundMiddleware} from '@/middlewares';
 
 import '@/providers';
+//import chalk from 'chalk';
 import { BotService} from './services';
 
 const environment: string = (process.env.ENV || 'production').toString().toUpperCase();
@@ -27,7 +27,7 @@ const environment: string = (process.env.ENV || 'production').toString().toUpper
     acceptMimes: ['application/json'],
     logger: {
         disableRoutesSummary: true,
-        // format: `${chalk.gray('[')}${chalk.yellow('%p%]')}${chalk.gray(']')} ${chalk.gray('%d{hh:mm:ss} | %m')}`,
+//        format: `${chalk.gray('[')}${chalk.yellow('%p%]')}${chalk.gray(']')} ${chalk.gray('%d{hh:mm:ss} | %m')}`,
         level: 'info',
         logRequest: false,
         logStart: false,
@@ -35,7 +35,7 @@ const environment: string = (process.env.ENV || 'production').toString().toUpper
         jsonIndentation: 0,
     },
     httpsPort: false,
-    port: 6000,
+    port: 6001,
 
     validationModelStrict: false,
     ajv: {
@@ -57,7 +57,7 @@ const environment: string = (process.env.ENV || 'production').toString().toUpper
         dialect: environment === 'TEST' ? 'sqlite' : 'mysql',
         username: process.env.MYSQL_USER,
         password: process.env.MYSQL_PASSWORD,
-        logging: console.log,
+        logging: msg => $log.debug(msg),
     }, 
 
     bot: {

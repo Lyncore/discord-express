@@ -1,6 +1,6 @@
 import type { ArgsOf, Client } from "discordx";
 import { Discord, On } from "discordx";
-import { Guild, GuildMember, Message, MessageReaction, TextBasedChannel, User } from "discord.js";
+import { Guild,} from "discord.js";
 
 @Discord()
 export class Events {
@@ -8,7 +8,6 @@ export class Events {
   onMessageDeleted([message]: ArgsOf<"messageDelete">, client: Client): void {
     console.log("Сообщение удалено", client.user?.username, message.content);
   }
-
 
   @On('error')
   onError([message]: ArgsOf<"error">, client: Client): void{
@@ -19,9 +18,10 @@ export class Events {
   onReady([message]: ArgsOf<"ready">, client: Client): void{
     client.user?.setActivity("/help");
   }
+
   @On("guildCreate")
   onGuildCreate(guild: Guild){
-    console.log("Добавлен сервер: " + guild.name)
+    console.log(`Добавлен сервер: ${  guild.name}`)
   }/*
   @On('guildMemberAdd')
   onGuildMemberAdd(member: GuildMember){
@@ -32,9 +32,5 @@ export class Events {
   onMessageCreate(reaction: MessageReaction, user: User ){
     if(user.bot){return;}
     
-  }*/
-}
-
-export class PlayerEvents{
-
+  } */
 }

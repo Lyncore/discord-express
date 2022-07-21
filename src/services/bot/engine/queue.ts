@@ -10,7 +10,9 @@ export class ExpressQueue extends Queue {
     }
 
     lastControlMessage?: Message;
+
     timeoutTimer?: NodeJS.Timeout;
+
     lockUpdate = false;
 
     get playbackMilliseconds(): number {

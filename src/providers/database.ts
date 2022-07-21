@@ -1,8 +1,8 @@
 // import { Application, AuthModel, Session, Token } from '@/models';
-import { $log } from '@tsed/common';
+// import { $log } from '@tsed/common';
 import {Configuration, registerProvider} from '@tsed/di';
-import {Sequelize, SequelizeOptions} from 'sequelize-typescript';
-// import {$log} from '@tsed/common';
+import { Sequelize, SequelizeOptions } from 'sequelize-typescript';
+
 // import {getPermissionSectionTypeObject, PermissionSectionType} from '@/enums';
 
 export const DATABASE_CONNECTION = Symbol.for('DATABASE_CONNECTION');

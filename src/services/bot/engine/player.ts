@@ -20,6 +20,7 @@ export class ExpressPlayer extends Player{
         
       
     }
+
     getQueue(guild: Guild, channel?: TextBasedChannel): ExpressQueue {
         return super.queue<ExpressQueue>(guild, () => new ExpressQueue(this, guild, channel));
     }
