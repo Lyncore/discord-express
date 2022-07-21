@@ -5,7 +5,7 @@ WORKDIR /src
 COPY package*.json ./
 
 # Install app dependencies
-RUN apk add --no-cache --virtual .build-deps alpine-sdk python
+RUN apk add --no-cache --virtual .build-deps alpine-sdk python3
 RUN npm install
 RUN apk del .build-deps
 
