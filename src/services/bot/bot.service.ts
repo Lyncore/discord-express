@@ -3,6 +3,8 @@ import { Configuration, Service } from "@tsed/di";
 import {importx } from "@discordx/importer";
 import {   IntentsBitField, Interaction, Message } from "discord.js";
 import { Client } from "discordx";
+import { BotOptions } from "./bot.options";
+import { Events } from "./events/events";
 
 
 @Service()
@@ -38,9 +40,9 @@ export class BotService{
 
         this.bot.once("ready", async () => {
           await this.bot.guilds.fetch();
-          
           await this.bot.initApplicationCommands();
-        
+          
+          this.bot.user.setActivity(this.configuration.get<BotOptions>('bot').playing);
           //await this.bot.initApplicationPermissions();
         
           // To clear all guild commands, uncomment this line,
@@ -65,7 +67,7 @@ export class BotService{
         });
         
         this.bot.on("messageCreate", (message: Message) => {
-          
+          Events.prototype.onMessageCreate(message);
           this.bot.executeCommand(message);
         });
 

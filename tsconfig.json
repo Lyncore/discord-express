@@ -19,7 +19,6 @@
       "allowSyntheticDefaultImports": true,
       
       "importHelpers": true,
-      //"esModuleInterop": true // required
     },
     "typeRoots": ["../node_modules/@types"],
     "include": ["src"],
