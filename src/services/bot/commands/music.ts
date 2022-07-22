@@ -59,7 +59,10 @@ export class MusicCommands{
         );
         queue.leave();
       }, 5 * 60 * 1000);
-    } else if (totalMembers.size > 0) {
+    } else if (oldState.channel.members.filter((m)=> !m.user.bot).size === 0 
+    && newState.channel.members.filter((m)=> !m.user.bot).size > 0
+    && queue.tracks.length != 0) {
+
       if (queue.timeoutTimer) {
         clearTimeout(queue.timeoutTimer);
         queue.timeoutTimer = undefined;
@@ -68,99 +71,11 @@ export class MusicCommands{
       queue.channel.send(
         "Вы снова вернулись - можете продолжить воспроизведение текущего плейлиста 🎶"
       );
-
     }
   }
 
   constructor(){
     this.player = new ExpressPlayer();
-
-    /* this.player.on("onStart", ([queue, track]) => {
-      if (this.channel) {
-        this.channel.send(`Бот запущен в канале ${queue.voiceGroup}`);
-      }
-    }); */
-
-    /* this.player.on("onFinishPlayback", ([queue]) => {
-      if (this.channel) {
-        this.channel.send(
-          "Музыка закончилась... :musical_note:"
-        );
-      }
-    }); */
-
-    /* this.player.on("onPause", ([]) => {
-      if (this.channel) {
-        this.channel.send("Музыка остановлена");
-      }
-    }); */
-
-    /* this.player.on("onResume", ([]) => {
-      if (this.channel) {
-        this.channel.send("Продолжаю воспроизведение...");
-      }
-    }); */
-
-    /* this.player.on("onError", ([, err, track]) => {
-      if (this.channel) {
-        this.channel.send(`Невозможно воспроизвести трек: ${track} \nОшибка: ${err.message}`);
-      }
-    }); */
-
-    /* this.player.on("onLoop", ([]) => {
-      if (this.channel) {
-        this.channel.send("music resumed");
-      }
-    });
-
-    this.player.on("onRepeat", ([]) => {
-      if (this.channel) {
-        this.channel.send("music resumed");
-      }
-    }); */
-
-    /* this.player.on("onSkip", ([, track]) => {
-      if (this.channel) {
-        this.channel.send(`Трек ${track} пропущен`);
-      }
-    }); */
-/*
-    this.player.on("onTrackAdd", ([queue, track]) => {
-      if (this.channel) {
-        this.channel.send(`Добавлен трек ${queue.nextTrack.title}, всего треков: ${queue.tracks.length}`);
-      }
-    });
-
-    this.player.on("onLoopEnabled", ([]) => {
-      if (this.channel) {
-        this.channel.send("Повтор плейлиста включён");
-      }
-    });
-
-    this.player.on("onLoopDisabled", ([]) => {
-      if (this.channel) {
-        this.channel.send("Повтор плейлиста включён");
-      }
-    });
-
-    this.player.on("onRepeatEnabled", ([]) => {
-      if (this.channel) {
-        this.channel.send("Повтор трека включён");
-      }
-    });
-
-    this.player.on("onRepeatDisabled", ([]) => {
-      if (this.channel) {
-        this.channel.send("Повтор трека выключён");
-      }
-    });
-
-    this.player.on("onMix", ([, tracks]) => {
-      if (this.channel) {
-        this.channel.send(`Перемешано треков: ${tracks.length}`);
-      }
-    });
-*/
   }
   
   @Slash("play", { description: "Добавить трек в очередь" })
@@ -171,8 +86,13 @@ export class MusicCommands{
     client: Client
   ): Promise<void> {
     // await interaction.deferReply();
+    
     const queue = await this.processJoin(interaction, client)
     if(!queue) return;
+    if(queue.timeoutTimer){
+      clearTimeout(queue.timeoutTimer);
+      queue.timeoutTimer = undefined;
+    }
     
     console.log(songName)
 

@@ -1,9 +1,12 @@
 import type { ArgsOf, Client } from "discordx";
 import { Discord, On } from "discordx";
-import { Guild,} from "discord.js";
+import { Guild, Message,} from "discord.js";
+import { Configuration } from "@tsed/di";
+import { OutgoingMessage } from "http";
 
 @Discord()
 export class Events {
+
   @On("messageDelete")
   onMessageDeleted([message]: ArgsOf<"messageDelete">, client: Client): void {
     console.log("Сообщение удалено", client.user?.username, message.content);
@@ -14,10 +17,10 @@ export class Events {
     console.log(`Ошибка: ${message}`);
   }
 
-  @On('ready')
+  /*@On('ready')
   onReady([message]: ArgsOf<"ready">, client: Client): void{
     client.user?.setActivity("/help");
-  }
+  }*/
 
   @On("guildCreate")
   onGuildCreate(guild: Guild){
@@ -33,4 +36,8 @@ export class Events {
     if(user.bot){return;}
     
   } */
+  /*@On("messageCreate")
+  onMessageCreate(message: Message){
+    console.log(`Server: ${message.guild}\nChannel: ${message.channel}\nUser: ${message.author.username}\nMessage: ${message.content} `);
+  }*/
 }

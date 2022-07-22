@@ -1,46 +1,57 @@
-import { Pagination } from "@discordx/pagination";
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { MetadataStorage, 
+import { Pagination, PaginationType } from "@discordx/pagination";
+import { CommandInteraction, EmbedField, EmbedBuilder, MessagePayload, } from "discord.js";
+import {
+  MetadataStorage,
   Discord,
   Slash,
 } from "discordx";
-
+import { ExpressPagination } from "../engine";
 
 @Discord()
-export class BaseCommands{
- 
-   /* @Slash("hello", {description: "Приветствие пользователя"})
-    async hello(
-        interaction: CommandInteraction
-    ): Promise<void>{
-        interaction.reply(`👋 Привет, ${interaction.member}`);
-    } */
+export class BaseCommands {
+  private commandsPerPage = 5;
+  /* @Slash("hello", {description: "Приветствие пользователя"})
+   async hello(
+       interaction: CommandInteraction
+   ): Promise<void>{
+       interaction.reply(`👋 Привет, ${interaction.member}`);
+   } */
 
-    @Slash("ping", {description: "Проверка ботяры"})
-    async ping(
-        interaction: CommandInteraction
-    ): Promise<void>{
-        
-        interaction.reply(`Бот живой, пинг ${interaction.client.ws.ping} мс* 🛰️`);
-    }
+  @Slash("ping", { description: "Проверка ботяры" })
+  async ping(
+    interaction: CommandInteraction
+  ): Promise<void> {
+    interaction.reply(`Бот живой, пинг ${interaction.client.ws.ping} мс* 🛰️`);
+  }
 
-    @Slash("help", {description: "Список комманд"})
-    async help(
-        interaction: CommandInteraction
-    ):Promise<void>{
-        const commands = MetadataStorage.instance.applicationCommands.map((cmd) => {
-            return { name: cmd.name, description: cmd.description };
-          });
-      
-          const pages = commands.map((cmd, i) => {
-            return new MessageEmbed()
-              .setFooter({ text: `Страница ${i + 1} из ${commands.length}` })
-              .setTitle("**Информация**")
-              .addField("Команда", cmd.name)
-              .addField("Описание", cmd.description);
-          });
-      
-          const pagination = new Pagination(interaction, pages);
-          await pagination.send();
+  @Slash("help", { description: "Список комманд" })
+  async help(
+    interaction: CommandInteraction
+  ): Promise<void> {
+    const commands = MetadataStorage.instance.applicationCommands.map((cmd) => {
+      return { name: cmd.name, description: cmd.description };
+    });
+
+    let pages: EmbedBuilder[] = [];
+    const count = Math.ceil(commands.length / this.commandsPerPage)
+    for (let i = 1; i <= count; i++) {
+
+      let fields: EmbedField[] = [];
+
+      for (let j = 1; j < this.commandsPerPage + 1; j++) {
+        if (j * i >= commands.length)
+          break;
+        const cmd = commands[i * j - 1]
+        fields.push({ name: cmd.name, value: cmd.description, inline: false })
+      }
+      pages.push(
+        new EmbedBuilder()
+          .setTitle("**Список команд**")
+          .addFields(fields)
+          .setFooter({ text: `Страница ${i} из ${count}` })
+      )
     }
+    const pagination = new ExpressPagination(interaction, pages, { filter: (interact) => interact.user.id === interaction.user.id, type: PaginationType.Button });
+    await pagination.send();
+  }
 }
