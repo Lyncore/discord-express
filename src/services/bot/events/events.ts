@@ -6,20 +6,21 @@ import { Guild, Message, } from "discord.js";
 @Discord()
 export class Events {
 
-  @On("messageDelete")
+  @On({event: "messageDelete"})
   onMessageDeleted([message]: ArgsOf<"messageDelete">, client: Client): void {
     console.log("Сообщение удалено", client.user?.username, message.content);
   }
 
-  @On('error')
+  @On({event: 'error'})
   onError([message]: ArgsOf<"error">, client: Client): void{
     console.log(`Ошибка: ${message}`);
   }
 
-  @On("guildCreate")
+  @On({ event:"guildCreate"} )
   onGuildCreate(guild: Guild){
     console.log(`Добавлен сервер: ${  guild.name}`)
   }
+
   /*
   @On('guildMemberAdd')
   onGuildMemberAdd(member: GuildMember){

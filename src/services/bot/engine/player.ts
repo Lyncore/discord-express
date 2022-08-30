@@ -7,7 +7,9 @@ export class ExpressPlayer extends Player{
         super();
 
         this.on<ExpressQueue, "onError">("onError", ([queue, err, track]) => {
+          console.log(err);
            queue.channel.send(`Невозможно воспроизвести трек: ${track} \nОшибка: ${err.message}`);
+
         })
 
         this.on<ExpressQueue, "onFinishPlayback">("onFinishPlayback", ([queue]) => {

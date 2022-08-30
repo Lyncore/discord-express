@@ -1,13 +1,14 @@
 import { Discord, Slash, SlashOption} from "discordx";
 import { ApplicationCommandOptionType, CommandInteraction, User } from "discord.js";
+
 @Discord()
 export class AdminCommands{
 
-    @Slash("report", {description: "Пожаловаться на пользователя"})
+    @Slash( {name: "report",description: "Пожаловаться на пользователя"})
     report(
-        @SlashOption("user", {description: "Пользователь", type: ApplicationCommandOptionType.User})
+        @SlashOption({name: "user",description: "Пользователь", type: ApplicationCommandOptionType.User})
         user: User,
-        @SlashOption("reason", {description: "Причина"})
+        @SlashOption( {name:"reason", description: "Причина"})
         reason: string,
         interaction: CommandInteraction
     ){

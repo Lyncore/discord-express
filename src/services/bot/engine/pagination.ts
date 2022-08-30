@@ -5,8 +5,8 @@ import { ButtonComponent } from "discordx";
 export class ExpressPagination<T extends PaginationResolver = PaginationResolver>  extends Pagination{
     constructor(sendTo: PaginationInteractions | Message | TextBasedChannel, embeds: PaginationItem[] | T, config?: PaginationOptions){
         super(sendTo, embeds, {
-            /*start: {label: "⏮️", }, 
-            end: {label:"⏭️", },*/
+            /* start: {label: "⏮️", }, 
+            end: {label:"⏭️", }, */
             next: {label:"Вперёд", },
             previous: {label:"Назад", },
             exit: {label: "Скрыть", style: ButtonStyle.Danger},

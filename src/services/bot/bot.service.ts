@@ -20,9 +20,9 @@ export class BotService{
           IntentsBitField.Flags.MessageContent
         ],
         silent: false,
-        /*simpleCommand: {
+        /* simpleCommand: {
           prefix: "/",
-        },*/
+        }, */
       });
 
     constructor(
@@ -43,7 +43,7 @@ export class BotService{
           await this.bot.initApplicationCommands();
           
           this.bot.user.setActivity(this.configuration.get<BotOptions>('bot').playing);
-          //await this.bot.initApplicationPermissions();
+          // await this.bot.initApplicationPermissions();
         
           // To clear all guild commands, uncomment this line,
           // This is useful when moving from guild commands to global commands
@@ -52,7 +52,7 @@ export class BotService{
           //  await this.bot.clearApplicationCommands(
           //    ...this.bot.guilds.cache.map((g) => g.id)
           //  );
-          //this.bot.user.setActivity(this.configuration.get<BotOptions>('bot').playing)
+          // this.bot.user.setActivity(this.configuration.get<BotOptions>('bot').playing)
 
           console.log("Bot started");
         });

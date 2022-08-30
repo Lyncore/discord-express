@@ -10,7 +10,7 @@ import '@tsed/ajv';
 import {ErrorHandlerMiddleWare, NotFoundMiddleware} from '@/middlewares';
 
 import '@/providers';
-//import chalk from 'chalk';
+// import chalk from 'chalk';
 import { BotService} from './services';
 
 const environment: string = (process.env.ENV || 'production').toString().toUpperCase();

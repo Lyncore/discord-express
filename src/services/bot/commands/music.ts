@@ -16,7 +16,7 @@ export class MusicCommands{
 
   channel: TextBasedChannel | undefined;
 
-  @On("voiceStateUpdate")
+  @On({event: "voiceStateUpdate"})
   voiceUpdate(
     [oldState, newState]: ArgsOf<"voiceStateUpdate">,
     // client: Client
@@ -78,9 +78,9 @@ export class MusicCommands{
     this.player = new ExpressPlayer();
   }
   
-  @Slash("play", { description: "Добавить трек в очередь" })
+  @Slash( {name: "play", description: "Добавить трек в очередь" })
   async play(
-    @SlashOption("song", { description: "Название или ссылка" })
+    @SlashOption( {name: "song", description: "Название или ссылка" })
     songName: string,
     interaction: CommandInteraction,
     client: Client
@@ -103,7 +103,7 @@ export class MusicCommands{
     } else {
       interaction.followUp(`Добавляю трек ${songName}...`); 
     }
-    /*if(regexPlaylist.test(songName)){
+    /* if(regexPlaylist.test(songName)){
       const status = await queue.playlist(songName);
       if (!status) {
         interaction.followUp("Плейлист не найден(");
@@ -117,10 +117,10 @@ export class MusicCommands{
       } else {
         interaction.followUp(`Добавляю трек ${songName}...`); 
       }
-    }*/
+    } */
   }
 
-  @Slash("now", {description: "Что играет?"})
+  @Slash( {name: "now", description: "Что играет?"})
   now(
     interaction: CommandInteraction
   ): void{
@@ -135,7 +135,7 @@ export class MusicCommands{
     Всего: ${fromMS(this.playbackMilliseconds(queue.currentTrack))}`)
   }
 
-  @Slash("pause", { description: "Пауза" })
+  @Slash({name: "pause",  description: "Пауза" })
   pause(interaction: CommandInteraction): void {
     const validate = this.validateInteraction(interaction);
     if (!validate) {
@@ -152,7 +152,7 @@ export class MusicCommands{
     queue.pause() ? interaction.reply("Воспроизведение приостановлено") : interaction.reply("Музыки нет...") ;
   }
 
-  @Slash("resume", { description: "Продолжить" })
+  @Slash( {name: "resume", description: "Продолжить" })
   resume(interaction: CommandInteraction): void {
     const validate = this.validateInteraction(interaction);
     if (!validate) {
@@ -169,7 +169,7 @@ export class MusicCommands{
     queue.resume() ? interaction.reply("Воспроизведение продолжено") : interaction.reply("Музыки нет...");
   }
 
-  @Slash("skip", { description: "Пропустить трек" })
+  @Slash( {name: "skip", description: "Пропустить трек" })
   skip(interaction: CommandInteraction): void {
     const validate = this.validateInteraction(interaction);
     if (!validate) {
@@ -185,7 +185,7 @@ export class MusicCommands{
     queue.skip() ? interaction.reply(`Трек ${queue.currentTrack.metadata.title} пропущен`) : interaction.reply("Музыки нет...");
   }
 
-  @Slash("stop", { description: "Остановить музыку" })
+  @Slash( {name: "stop", description: "Остановить музыку" })
   leave(interaction: CommandInteraction): void {
     const validate = this.validateInteraction(interaction);
     if (!validate) {

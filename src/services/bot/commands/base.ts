@@ -17,14 +17,14 @@ export class BaseCommands {
        interaction.reply(`👋 Привет, ${interaction.member}`);
    } */
 
-  @Slash("ping", { description: "Проверка ботяры" })
+  @Slash({ name: "ping",  description: "Проверка ботяры" })
   async ping(
     interaction: CommandInteraction
-  ): Promise<void> {
+  ): Promise<void> { 
     interaction.reply(`Бот живой, пинг ${interaction.client.ws.ping} мс* 🛰️`);
   }
 
-  @Slash("help", { description: "Список комманд" })
+  @Slash( { name: "help", description: "Список комманд" })
   async help(
     interaction: CommandInteraction
   ): Promise<void> {
@@ -32,11 +32,11 @@ export class BaseCommands {
       return { name: cmd.name, description: cmd.description };
     });
 
-    let pages: EmbedBuilder[] = [];
+    const pages: EmbedBuilder[] = [];
     const count = Math.ceil(commands.length / this.commandsPerPage)
     for (let i = 1; i <= count; i++) {
 
-      let fields: EmbedField[] = [];
+      const fields: EmbedField[] = [];
 
       for (let j = 1; j < this.commandsPerPage + 1; j++) {
         if (j * i >= commands.length)
