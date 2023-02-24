@@ -21,7 +21,7 @@ registerProvider({
          Token
        ]); */
 
-       await client.sync();
+       //await client.sync();
         /*
     const baseRole = await Role.findOrCreate({
       where: {
